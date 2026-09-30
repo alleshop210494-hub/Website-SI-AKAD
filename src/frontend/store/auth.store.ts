@@ -1,49 +1,41 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { User } from '@/shared/types/user.type';
 
 interface AuthState {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
-  logout: () => void;
-  initializeAuth: () => void;
+  setAuth: (user: User, accessToken: string) => void;
+  clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-
-  setAuth: (user, token) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('siakad_token', token);
-      localStorage.setItem('siakad_user', JSON.stringify(user));
-    }
-    set({ user, token, isAuthenticated: true });
-  },
-
-  logout: () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('siakad_token');
-      localStorage.removeItem('siakad_user');
-    }
-    set({ user: null, token: null, isAuthenticated: false });
-  },
-
-  initializeAuth: () => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('siakad_token');
-      const userStr = localStorage.getItem('siakad_user');
-      if (token && userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          set({ user, token, isAuthenticated: true });
-        } catch {
-          localStorage.removeItem('siakad_token');
-          localStorage.removeItem('siakad_user');
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+      setAuth: (user: User, accessToken: string) =>
+        set({
+          user,
+          accessToken,
+          isAuthenticated: true,
+        }),
+      clearAuth: () => {
+        set({
+          user: null,
+          accessToken: null,
+          isAuthenticated: false,
+        });
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('siakad-auth-storage');
         }
-      }
+      },
+    }),
+    {
+      name: 'siakad-auth-storage',
+      storage: createJSONStorage(() => localStorage),
     }
-  },
-}));
+  )
+);

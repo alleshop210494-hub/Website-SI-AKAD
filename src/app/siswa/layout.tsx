@@ -16,6 +16,7 @@ export default function SiswaLayout({
   const handleLogout = () => {
     clearAuth();
     router.push('/login');
+    router.refresh();
   };
 
   const navItems = [
@@ -66,6 +67,7 @@ export default function SiswaLayout({
             <p className="text-[10px] text-slate-400">{user?.email || 'siswa@siakad.sch.id'}</p>
           </div>
           <button
+            type="button"
             onClick={handleLogout}
             className="w-full rounded-xl bg-rose-950/40 border border-rose-800/50 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-900/60 transition-colors"
           >

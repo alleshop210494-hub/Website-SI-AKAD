@@ -16,6 +16,7 @@ export default function AdminLayout({
   const handleLogout = () => {
     clearAuth();
     router.push('/login');
+    router.refresh();
   };
 
   const navItems = [
@@ -28,7 +29,6 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100">
-      {/* Sidebar Navigasi Admin */}
       <aside className="w-64 border-r border-slate-800 bg-slate-900/50 p-6 flex flex-col justify-between shrink-0">
         <div>
           <div className="flex items-center gap-3 mb-8">
@@ -68,6 +68,7 @@ export default function AdminLayout({
             <p className="text-[10px] text-slate-400">{user?.email || 'admin@siakad.sch.id'}</p>
           </div>
           <button
+            type="button"
             onClick={handleLogout}
             className="w-full rounded-xl bg-rose-950/40 border border-rose-800/50 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-900/60 transition-colors"
           >
@@ -76,7 +77,6 @@ export default function AdminLayout({
         </div>
       </aside>
 
-      {/* Area Konten Utama */}
       <main className="flex-1 p-8 overflow-y-auto">
         {children}
       </main>
