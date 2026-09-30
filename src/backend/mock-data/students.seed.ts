@@ -1,0 +1,38 @@
+import { Student } from '@/shared/types/student.type';
+
+export const mockStudents: Student[] = [
+  {
+    id: 'std-1',
+    userId: 'usr-siswa-1',
+    nisn: '0012345678',
+    nis: '23241001',
+    fullName: 'Ahmad Rizky Pratama',
+    gender: 'L',
+    birthPlace: 'Jakarta',
+    birthDate: '2008-05-14',
+    classId: 'cls-10a',
+    className: 'X IPA 1',
+    parentId: 'usr-ortu-1',
+    parentName: 'Bambang Pratama',
+    address: 'Jl. Merdeka No. 45, Jakarta Selatan',
+    isClassLeader: true,
+    createdAt: '2025-01-01T00:00:00Z',
+  },
+  {
+    id: 'std-2',
+    userId: 'usr-siswa-2',
+    nisn: '0012345679',
+    nis: '23241002',
+    fullName: 'Siti Sarah Nurhaliza',
+    gender: 'P',
+    birthPlace: 'Bandung',
+    birthDate: '2008-08-22',
+    classId: 'cls-10a',
+    className: 'X IPA 1',
+    parentId: 'usr-ortu-2',
+    parentName: 'Rahmat Hidayat',
+    address: 'Jl. Mawar No. 12, Jakarta Selatan',
+    isClassLeader: false,
+    createdAt: '2025-01-01T00:00:00Z',
+  },
+];
