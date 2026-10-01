@@ -34,10 +34,10 @@ export default function StudentSidebar() {
     },
     {
       label: "Presensi Saya",
-      href: "/siswa/attendances", // Ubah ke /siswa/attendance atau /siswa/absensi jika nama foldernya beda
+      href: "/siswa/attendances",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75M15 12H18m-3 3H18m-3 3H18M3.75 4.5h16.5" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75M15 12H18m-3 3H18m-3 3H18M3.75 4.5h16.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H3.75A1.5 1.5 0 012.25 18V6a1.5 1.5 0 011.5-1.5z" />
         </svg>
       ),
     },
@@ -46,7 +46,7 @@ export default function StudentSidebar() {
       href: "/siswa/grades",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147L12 14.6l7.74-4.453a1.125 1.125 0 000-1.946L12 3.75 4.26 8.201a1.125 1.125 0 000 1.946z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147L12 14.6l7.74-4.453a1.125 1.125 0 000-1.946L12 3.75 4.26 8.201a1.125 1.125 0 000 1.946zM2.25 12.3l9.25 5.32 9.25-5.32M2.25 15.6l9.25 5.32 9.25-5.32" />
         </svg>
       ),
     },
@@ -64,6 +64,7 @@ export default function StudentSidebar() {
   return (
     <aside className="w-64 bg-white border-r border-slate-200/80 min-h-screen p-5 flex flex-col justify-between shrink-0">
       <div className="space-y-6">
+        {/* Brand Logo Header */}
         <div className="px-2 py-1 flex items-center gap-3">
           <div className="w-9 h-9 bg-slate-900 text-white rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">
             S
@@ -74,6 +75,7 @@ export default function StudentSidebar() {
           </div>
         </div>
 
+        {/* Navigation Menu */}
         <nav className="space-y-1">
           {navItems.map((item) => {
             const isActive =
@@ -101,6 +103,7 @@ export default function StudentSidebar() {
         </nav>
       </div>
 
+      {/* User Info & Logout */}
       <div className="border-t border-slate-100 pt-4 space-y-3">
         <div className="px-3 py-2.5 bg-slate-50 rounded-lg border border-slate-100">
           <p className="text-xs font-semibold text-slate-800">Ahmad Dahlan</p>

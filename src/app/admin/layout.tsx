@@ -1,7 +1,5 @@
-"use client";
-
 import React from "react";
-import AdminSidebar from "@/frontend/components/AdminSidebar";
+import AdminSidebar from "../../frontend/components/AdminSidebar";
 
 export default function AdminLayout({
   children,
@@ -9,9 +7,11 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-slate-50/50">
+    <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
       <AdminSidebar />
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="flex-1 min-w-0 overflow-y-auto">
+        {children}
+      </main>
     </div>
   );
 }
