@@ -21,34 +21,44 @@ export default function TeacherSchedulesPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Jadwal Mengajar</h1>
-        <p className="text-gray-500 text-sm">
-          Daftar sesi jam mengajar pelajaran Matematika minggu ini
-        </p>
+    <div className="p-8 max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-6">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+            Jadwal Mengajar
+          </h1>
+          <p className="text-slate-500 text-xs mt-1">
+            Daftar alokasi waktu dan ruangan kelas pengampuan mata pelajaran.
+          </p>
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Clean Table */}
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
-                <th className="py-3.5 px-4">Hari</th>
-                <th className="py-3.5 px-4">Waktu</th>
-                <th className="py-3.5 px-4">Kelas</th>
-                <th className="py-3.5 px-4">Mata Pelajaran</th>
-                <th className="py-3.5 px-4">Ruangan</th>
+              <tr className="border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider bg-slate-50/50">
+                <th className="py-3 px-5">Hari</th>
+                <th className="py-3 px-5">Waktu</th>
+                <th className="py-3 px-5">Kelas</th>
+                <th className="py-3 px-5">Mata Pelajaran</th>
+                <th className="py-3 px-5">Ruangan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+            <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
               {schedules.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50/50">
-                  <td className="py-3.5 px-4 font-semibold text-gray-800">{item.day}</td>
-                  <td className="py-3.5 px-4 text-gray-600">{item.time}</td>
-                  <td className="py-3.5 px-4 font-medium text-blue-600">{item.classRoom}</td>
-                  <td className="py-3.5 px-4">{item.subject}</td>
-                  <td className="py-3.5 px-4 text-gray-500">{item.room}</td>
+                <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="py-3.5 px-5 font-semibold text-slate-900">{item.day}</td>
+                  <td className="py-3.5 px-5 text-slate-600">{item.time}</td>
+                  <td className="py-3.5 px-5">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-800 ring-1 ring-inset ring-slate-200">
+                      {item.classRoom}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-5 font-medium text-slate-800">{item.subject}</td>
+                  <td className="py-3.5 px-5 text-slate-500">{item.room}</td>
                 </tr>
               ))}
             </tbody>
