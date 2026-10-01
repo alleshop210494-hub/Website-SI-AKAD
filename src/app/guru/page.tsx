@@ -1,43 +1,81 @@
-'use client';
+"use client";
 
-import { useAuthStore } from '@/frontend/store/auth.store';
+import React from "react";
+import Link from "next/link";
 
-export default function GuruDashboardPage() {
-  const { user } = useAuthStore();
-
+export default function TeacherDashboardPage() {
   return (
-    <div className="space-y-8">
-      <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 backdrop-blur-xl">
-        <div>
-          <h1 className="text-xl font-bold text-white">Dashboard Guru</h1>
-          <p className="text-xs text-slate-400">Selamat datang di portal tenaga pendidik.</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-bold text-white">{user?.name || 'Siti Aminah, M.Pd.'}</p>
-            <p className="text-xs text-slate-400">{user?.email || 'guru@sekolah.sch.id'}</p>
-          </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-950 font-bold text-emerald-300 border border-emerald-700/50">
-            {user?.name ? user.name.charAt(0).toUpperCase() : 'G'}
-          </div>
-        </div>
-      </header>
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Selamat Datang, Guru Matematika! 👋
+        </h1>
+        <p className="text-gray-500 text-sm mt-1">
+          Ringkasan aktivitas mengajar dan kelas Anda hari ini.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 backdrop-blur-xl">
-          <span className="text-xs font-semibold text-slate-400">Jadwal Hari Ini</span>
-          <p className="mt-2 text-2xl font-bold text-white">3 Kelas</p>
-          <span className="text-[11px] text-emerald-400">Matematika Wajib</span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-gray-500">Total Kelas Diampu</p>
+              <h3 className="text-2xl font-bold text-gray-800 mt-1">4 Kelas</h3>
+            </div>
+            <span className="text-2xl p-3 bg-blue-50 rounded-lg">🏫</span>
+          </div>
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 backdrop-blur-xl">
-          <span className="text-xs font-semibold text-slate-400">Total Siswa Ajar</span>
-          <p className="mt-2 text-2xl font-bold text-white">120 Siswa</p>
-          <span className="text-[11px] text-emerald-400">Kelas X & XI</span>
+
+        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-gray-500">Total Siswa</p>
+              <h3 className="text-2xl font-bold text-gray-800 mt-1">128 Siswa</h3>
+            </div>
+            <span className="text-2xl p-3 bg-emerald-50 rounded-lg">👨‍🎓</span>
+          </div>
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 backdrop-blur-xl">
-          <span className="text-xs font-semibold text-slate-400">Status Input Nilai</span>
-          <p className="mt-2 text-2xl font-bold text-white">85%</p>
-          <span className="text-[11px] text-amber-400">Penilaian UTS</span>
+
+        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium text-gray-500">Jadwal Mengajar Hari Ini</p>
+              <h3 className="text-2xl font-bold text-gray-800 mt-1">2 Sesi</h3>
+            </div>
+            <span className="text-2xl p-3 bg-amber-50 rounded-lg">📅</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <h2 className="text-lg font-bold text-gray-800 mb-4">Akses Cepat</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link
+            href="/guru/schedules"
+            className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-colors"
+          >
+            <span className="text-xl">📅</span>
+            <h4 className="font-semibold text-gray-800 mt-2">Jadwal Mengajar</h4>
+            <p className="text-xs text-gray-500 mt-1">Lihat jam dan ruang kelas mengajar</p>
+          </Link>
+
+          <Link
+            href="/guru/absensi"
+            className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-colors"
+          >
+            <span className="text-xl">📝</span>
+            <h4 className="font-semibold text-gray-800 mt-2">Absensi Kelas</h4>
+            <p className="text-xs text-gray-500 mt-1">Catat kehadiran siswa harian</p>
+          </Link>
+
+          <Link
+            href="/guru/grading"
+            className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-colors"
+          >
+            <span className="text-xl">🎓</span>
+            <h4 className="font-semibold text-gray-800 mt-2">Input Penilaian</h4>
+            <p className="text-xs text-gray-500 mt-1">Kelola nilai tugas, UTS, dan UAS</p>
+          </Link>
         </div>
       </div>
     </div>
