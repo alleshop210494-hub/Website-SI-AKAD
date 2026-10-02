@@ -1,144 +1,233 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import { useState } from 'react';
 
-interface Teacher {
+interface Guru {
+  id: number;
   nip: string;
-  name: string;
-  subject: string;
+  nama: string;
+  mapel: string;
   email: string;
-  phone: string;
-  status: "Aktif" | "Non-Aktif";
+  noHp: string;
+  status: 'Aktif' | 'Nonaktif';
 }
 
-export default function AdminTeachersPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [teachers] = useState<Teacher[]>([
-    {
-      nip: "198501152010011001",
-      name: "Siti Aminah, M.Pd.",
-      subject: "Matematika",
-      email: "siti.aminah@sekolah.sch.id",
-      phone: "081122334455",
-      status: "Aktif",
-    },
-    {
-      nip: "198703202012022002",
-      name: "Drs. Agus Wijaya",
-      subject: "Fisika",
-      email: "agus.wijaya@sekolah.sch.id",
-      phone: "081122334456",
-      status: "Aktif",
-    },
-    {
-      nip: "199008122015031003",
-      name: "Rina Kartika, S.Pd.",
-      subject: "Bahasa Inggris",
-      email: "rina.kartika@sekolah.sch.id",
-      phone: "081122334457",
-      status: "Aktif",
-    },
+export default function TeacherPage() {
+  const [guruList, setGuruList] = useState<Guru[]>([
+    { id: 1, nip: '198501012010011001', nama: 'Drs. Bambang Wijaya', mapel: 'Matematika', email: 'bambang@sekolah.sch.id', noHp: '081234567111', status: 'Aktif' },
+    { id: 2, nip: '198803152012012002', nama: 'Siti Aminah, S.Pd.', mapel: 'Bahasa Indonesia', email: 'siti.aminah@sekolah.sch.id', noHp: '081234567222', status: 'Aktif' },
   ]);
 
-  const filteredTeachers = teachers.filter(
-    (t) =>
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.nip.includes(searchQuery) ||
-      t.subject.toLowerCase().includes(searchQuery.toLowerCase())
+  const [search, setSearch] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    nip: '',
+    nama: '',
+    mapel: '',
+    email: '',
+    noHp: '',
+  });
+
+  const handleTambahGuru = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.nip || !formData.nama) return;
+
+    const newGuru: Guru = {
+      id: Date.now(),
+      ...formData,
+      status: 'Aktif',
+    };
+
+    setGuruList([...guruList, newGuru]);
+    setIsModalOpen(false);
+    setFormData({ nip: '', nama: '', mapel: '', email: '', noHp: '' });
+  };
+
+  const handleHapusGuru = (id: number) => {
+    if (confirm('Apakah Anda yakin ingin menghapus data guru ini?')) {
+      setGuruList(guruList.filter((g) => g.id !== id));
+    }
+  };
+
+  const filteredGuru = guruList.filter(
+    (g) =>
+      g.nama.toLowerCase().includes(search.toLowerCase()) ||
+      g.nip.includes(search) ||
+      g.mapel.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Data Guru & Staff Pengajar
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Kelola data tenaga pendidik, NIP, serta mata pelajaran yang diampu.
+          <h1 className="text-2xl font-bold text-slate-900">Data Master Guru</h1>
+          <p className="text-slate-500 text-sm mt-1">
+            Kelola data seluruh tenaga pengajar dan mata pelajaran yang diampu.
           </p>
         </div>
-        <button className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium transition-colors shadow-sm">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Tambah Guru Baru</span>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-slate-950 hover:bg-slate-800 text-white font-medium px-4 py-2.5 rounded-lg flex items-center gap-2 text-sm transition-colors"
+        >
+          <span className="text-lg leading-none">+</span> Tambah Guru Baru
         </button>
       </div>
 
-      {/* Table Container */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
-        {/* Search Bar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-80">
-            <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center gap-4">
+          <div className="relative flex-1 max-w-md">
             <input
               type="text"
               placeholder="Cari berdasarkan Nama, NIP, atau Mapel..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
+            <span className="absolute left-3 top-2.5 text-slate-400">🔍</span>
           </div>
-          <span className="text-xs text-slate-500 self-end sm:self-center font-medium">
-            Total: <strong className="text-slate-900">{filteredTeachers.length}</strong> Pengajar
+          <span className="text-sm font-medium text-slate-600">
+            Total: <strong className="text-slate-900">{filteredGuru.length} Guru</strong>
           </span>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-medium">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
               <tr>
-                <th className="px-5 py-3">NIP</th>
-                <th className="px-5 py-3">Nama Guru</th>
-                <th className="px-5 py-3">Mata Pelajaran</th>
-                <th className="px-5 py-3">Email & Kontak</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Aksi</th>
+                <th className="px-6 py-3.5 font-semibold">NIP</th>
+                <th className="px-6 py-3.5 font-semibold">Nama Guru</th>
+                <th className="px-6 py-3.5 font-semibold">Mata Pelajaran</th>
+                <th className="px-6 py-3.5 font-semibold">Email & Kontak</th>
+                <th className="px-6 py-3.5 font-semibold">Status</th>
+                <th className="px-6 py-3.5 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
-              {filteredTeachers.length > 0 ? (
-                filteredTeachers.map((item) => (
-                  <tr key={item.nip} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="px-5 py-3.5 font-mono text-slate-600">{item.nip}</td>
-                    <td className="px-5 py-3.5 font-semibold text-slate-900">{item.name}</td>
-                    <td className="px-5 py-3.5">
-                      <span className="px-2.5 py-1 bg-slate-100 text-slate-700 font-medium rounded-md text-[11px]">
-                        {item.subject}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <p className="text-slate-800 font-medium">{item.email}</p>
-                      <p className="text-[11px] text-slate-400">{item.phone}</p>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <button className="text-rose-600 hover:text-rose-700 font-medium hover:underline text-xs">
-                        Hapus
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="px-5 py-8 text-center text-slate-400">
-                    Data guru tidak ditemukan.
+            <tbody className="divide-y divide-slate-100">
+              {filteredGuru.map((guru) => (
+                <tr key={guru.id} className="hover:bg-slate-50/50">
+                  <td className="px-6 py-4 text-slate-600 font-mono text-xs">{guru.nip}</td>
+                  <td className="px-6 py-4 font-semibold text-slate-900">{guru.nama}</td>
+                  <td className="px-6 py-4">
+                    <span className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded text-xs font-medium">
+                      {guru.mapel}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-slate-900 font-medium">{guru.email}</div>
+                    <div className="text-xs text-slate-400">{guru.noHp}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      {guru.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => handleHapusGuru(guru.id)}
+                      className="text-rose-600 hover:text-rose-700 font-medium text-xs hover:underline"
+                    >
+                      Hapus
+                    </button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-slate-900 text-lg">Tambah Guru Baru</h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 text-xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleTambahGuru} className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">NIP</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: 198501012010011001"
+                  value={formData.nip}
+                  onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Drs. Ahmad, M.Pd."
+                  value={formData.nama}
+                  onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Mata Pelajaran</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Fisika / Bahasa Inggris"
+                  value={formData.mapel}
+                  onChange={(e) => setFormData({ ...formData, mapel: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  placeholder="guru@sekolah.sch.id"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">No. HP / WhatsApp</label>
+                <input
+                  type="text"
+                  placeholder="081234567890"
+                  value={formData.noHp}
+                  onChange={(e) => setFormData({ ...formData, noHp: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium"
+                >
+                  Simpan Guru
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,150 +1,253 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import { useState } from 'react';
 
-interface Student {
+interface Siswa {
+  id: number;
   nisn: string;
-  name: string;
-  className: string;
-  gender: "L" | "P";
+  nama: string;
+  kelas: string;
+  gender: 'L' | 'P';
   email: string;
-  phone: string;
-  status: "Aktif" | "Non-Aktif";
+  noHp: string;
+  status: 'Aktif' | 'Nonaktif';
 }
 
-export default function AdminStudentsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [students] = useState<Student[]>([
-    {
-      nisn: "0012345678",
-      name: "Ahmad Rizky",
-      className: "X IPA 1",
-      gender: "L",
-      email: "ahmad.rizky@sekolah.sch.id",
-      phone: "081234567890",
-      status: "Aktif",
-    },
-    {
-      nisn: "0012345679",
-      name: "Siti Nurhaliza",
-      className: "X IPA 1",
-      gender: "P",
-      email: "siti.nurhaliza@sekolah.sch.id",
-      phone: "081234567891",
-      status: "Aktif",
-    },
-    {
-      nisn: "0012345680",
-      name: "Budi Pratama",
-      className: "XI IPS 2",
-      gender: "L",
-      email: "budi.pratama@sekolah.sch.id",
-      phone: "081234567892",
-      status: "Aktif",
-    },
+export default function StudentPage() {
+  const [siswaList, setSiswaList] = useState<Siswa[]>([
+    { id: 1, nisn: '0012345678', nama: 'Ahmad Rizky', kelas: 'X IPA 1', gender: 'L', email: 'ahmad.rizky@sekolah.sch.id', noHp: '081234567890', status: 'Aktif' },
+    { id: 2, nisn: '0012345679', nama: 'Siti Nurhaliza', kelas: 'X IPA 1', gender: 'P', email: 'siti.nurhaliza@sekolah.sch.id', noHp: '081234567891', status: 'Aktif' },
+    { id: 3, nisn: '0012345680', nama: 'Budi Pratama', kelas: 'XI IPS 2', gender: 'L', email: 'budi.pratama@sekolah.sch.id', noHp: '081234567892', status: 'Aktif' },
   ]);
 
-  const filteredStudents = students.filter(
+  const [search, setSearch] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    nisn: '',
+    nama: '',
+    kelas: 'X IPA 1',
+    gender: 'L' as 'L' | 'P',
+    email: '',
+    noHp: '',
+  });
+
+  const handleTambahSiswa = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.nisn || !formData.nama) return;
+
+    const newSiswa: Siswa = {
+      id: Date.now(),
+      ...formData,
+      status: 'Aktif',
+    };
+
+    setSiswaList([...siswaList, newSiswa]);
+    setIsModalOpen(false);
+    setFormData({ nisn: '', nama: '', kelas: 'X IPA 1', gender: 'L', email: '', noHp: '' });
+  };
+
+  const handleHapusSiswa = (id: number) => {
+    if (confirm('Apakah Anda yakin ingin menghapus siswa ini?')) {
+      setSiswaList(siswaList.filter((s) => s.id !== id));
+    }
+  };
+
+  const filteredSiswa = siswaList.filter(
     (s) =>
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.nisn.includes(searchQuery) ||
-      s.className.toLowerCase().includes(searchQuery.toLowerCase())
+      s.nama.toLowerCase().includes(search.toLowerCase()) ||
+      s.nisn.includes(search) ||
+      s.kelas.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Data Master Siswa
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900">Data Master Siswa</h1>
+          <p className="text-slate-500 text-sm mt-1">
             Kelola data seluruh siswa terdaftar dan status keaktifan mereka.
           </p>
         </div>
-        <button className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium transition-colors shadow-sm">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Tambah Siswa Baru</span>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-slate-950 hover:bg-slate-800 text-white font-medium px-4 py-2.5 rounded-lg flex items-center gap-2 text-sm transition-colors"
+        >
+          <span className="text-lg leading-none">+</span> Tambah Siswa Baru
         </button>
       </div>
 
-      {/* Table Container */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
-        {/* Search & Filter Bar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-80">
-            <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center gap-4">
+          <div className="relative flex-1 max-w-md">
             <input
               type="text"
               placeholder="Cari berdasarkan Nama, NISN, atau Kelas..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
+            <span className="absolute left-3 top-2.5 text-slate-400">🔍</span>
           </div>
-          <span className="text-xs text-slate-500 self-end sm:self-center font-medium">
-            Total: <strong className="text-slate-900">{filteredStudents.length}</strong> Siswa
+          <span className="text-sm font-medium text-slate-600">
+            Total: <strong className="text-slate-900">{filteredSiswa.length} Siswa</strong>
           </span>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-medium">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
               <tr>
-                <th className="px-5 py-3">NISN</th>
-                <th className="px-5 py-3">Nama Siswa</th>
-                <th className="px-5 py-3">Kelas</th>
-                <th className="px-5 py-3">L/P</th>
-                <th className="px-5 py-3">Email & Kontak</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Aksi</th>
+                <th className="px-6 py-3.5 font-semibold">NISN</th>
+                <th className="px-6 py-3.5 font-semibold">Nama Siswa</th>
+                <th className="px-6 py-3.5 font-semibold">Kelas</th>
+                <th className="px-6 py-3.5 font-semibold">L/P</th>
+                <th className="px-6 py-3.5 font-semibold">Email & Kontak</th>
+                <th className="px-6 py-3.5 font-semibold">Status</th>
+                <th className="px-6 py-3.5 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
-              {filteredStudents.length > 0 ? (
-                filteredStudents.map((item) => (
-                  <tr key={item.nisn} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="px-5 py-3.5 font-mono text-slate-600">{item.nisn}</td>
-                    <td className="px-5 py-3.5 font-semibold text-slate-900">{item.name}</td>
-                    <td className="px-5 py-3.5">
-                      <span className="px-2.5 py-1 bg-slate-100 text-slate-700 font-medium rounded-md text-[11px]">
-                        {item.className}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 font-medium">{item.gender}</td>
-                    <td className="px-5 py-3.5">
-                      <p className="text-slate-800 font-medium">{item.email}</p>
-                      <p className="text-[11px] text-slate-400">{item.phone}</p>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <button className="text-rose-600 hover:text-rose-700 font-medium hover:underline text-xs">
-                        Hapus
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-slate-400">
-                    Data siswa tidak ditemukan.
+            <tbody className="divide-y divide-slate-100">
+              {filteredSiswa.map((siswa) => (
+                <tr key={siswa.id} className="hover:bg-slate-50/50">
+                  <td className="px-6 py-4 text-slate-600 font-mono text-xs">{siswa.nisn}</td>
+                  <td className="px-6 py-4 font-semibold text-slate-900">{siswa.nama}</td>
+                  <td className="px-6 py-4">
+                    <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded text-xs font-medium">
+                      {siswa.kelas}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-slate-600">{siswa.gender}</td>
+                  <td className="px-6 py-4">
+                    <div className="text-slate-900 font-medium">{siswa.email}</div>
+                    <div className="text-xs text-slate-400">{siswa.noHp}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      {siswa.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => handleHapusSiswa(siswa.id)}
+                      className="text-rose-600 hover:text-rose-700 font-medium text-xs hover:underline"
+                    >
+                      Hapus
+                    </button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-slate-900 text-lg">Tambah Siswa Baru</h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 text-xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleTambahSiswa} className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">NISN</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: 0012345681"
+                  value={formData.nisn}
+                  onChange={(e) => setFormData({ ...formData, nisn: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Masukkan nama siswa"
+                  value={formData.nama}
+                  onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Kelas</label>
+                  <select
+                    value={formData.kelas}
+                    onChange={(e) => setFormData({ ...formData, kelas: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="X IPA 1">X IPA 1</option>
+                    <option value="X IPA 2">X IPA 2</option>
+                    <option value="XI IPS 1">XI IPS 1</option>
+                    <option value="XI IPS 2">XI IPS 2</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Jenis Kelamin</label>
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'L' | 'P' })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="L">Laki-laki (L)</option>
+                    <option value="P">Perempuan (P)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  placeholder="siswa@sekolah.sch.id"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">No. HP / WhatsApp</label>
+                <input
+                  type="text"
+                  placeholder="081234567890"
+                  value={formData.noHp}
+                  onChange={(e) => setFormData({ ...formData, noHp: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg font-medium"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium"
+                >
+                  Simpan Siswa
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
