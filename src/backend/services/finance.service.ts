@@ -1,37 +1,45 @@
-import { FinanceMockRepository } from '../repositories/mock/finance.mock-repo';
-import { confirmPaymentSchema, ConfirmPaymentInput } from '@/shared/schemas/finance.schema';
-import { PaymentStatus } from '@/shared/constants/roles';
-import { AppError } from '../errors/app-error';
+import { pool } from '@/backend/config/db';
 
-export class FinanceService {
-  private financeRepo = new FinanceMockRepository();
+export const FinanceService = {
+  // Mengambil seluruh data tagihan keuangan dari database Neon
+  async getAllInvoices() {
+    try {
+      const result = await pool.query('SELECT * FROM finance_invoices ORDER BY id DESC');
+      return result.rows;
+    } catch (error) {
+      console.error('Gagal mengambil data keuangan dari database:', error);
+      return [];
+    }
+  },
 
-  async getInvoices(params?: { studentId?: string; status?: string }) {
-    return this.financeRepo.findInvoices(params);
+  // Menambahkan data tagihan baru ke database Neon
+  async createInvoice(data: {
+    kode_tagihan: string;
+    nama_siswa: string;
+    kelas: string;
+    jenis_tagihan: string;
+    nominal: number;
+    status: string;
+  }) {
+    try {
+      const query = `
+        INSERT INTO finance_invoices (kode_tagihan, nama_siswa, kelas, jenis_tagihan, nominal, status)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *;
+      `;
+      const values = [
+        data.kode_tagihan,
+        data.nama_siswa,
+        data.kelas,
+        data.jenis_tagihan,
+        data.nominal,
+        data.status || 'Belum Bayar',
+      ];
+      const result = await pool.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Gagal menyimpan data tagihan:', error);
+      throw error;
+    }
   }
-
-  async confirmPayment(payload: ConfirmPaymentInput) {
-    const parseResult = confirmPaymentSchema.safeParse(payload);
-    if (!parseResult.success) {
-      throw new AppError('Payload konfirmasi pembayaran tidak valid', 400, parseResult.error.format());
-    }
-
-    const invoice = await this.financeRepo.findInvoiceById(payload.invoiceId);
-    if (!invoice) {
-      throw new AppError('Invoice SPP tidak ditemukan', 404);
-    }
-
-    if (invoice.status === PaymentStatus.PAID) {
-      throw new AppError('Invoice ini sudah lunas', 400);
-    }
-
-    return this.financeRepo.updateInvoice(payload.invoiceId, {
-      status: PaymentStatus.PAID,
-      paidAt: new Date().toISOString(),
-      paymentMethod: payload.paymentMethod,
-      proofUrl: payload.proofUrl,
-    });
-  }
-}
-
-export const financeService = new FinanceService();
+};
